@@ -4,6 +4,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Database\Eloquent\Model;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,7 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 |
 */
 
-Route::get('/', function () {
+Route::get( '/', function () {
 //
 //   $doc =  YamlFrontMatter::parseFile(
 //        resource_path('posts/my-third-post.html')
@@ -37,31 +38,20 @@ Route::get('/', function () {
 //        $posts[] = new Post($document->title,$document->excerpt,$document->date,$document->body(),$document->slug);
 //    }
     $posts = Post::all();
-    return view('posts', ['posts' => $posts]);
+    return view( 'posts', [ 'posts' => $posts ] );
 //    $posts = Post::all();
 //    return view('posts',[
 //        'posts' => $posts
 //    ]);
-});
+} );
 
-Route::get('post/{post}', function ($slug) {
+Route::get( 'posts/{post:slug}', function ( Post $post ) {
 
-  $post = Post::find($slug);
-//    $str = __DIR__ . "/../resources/posts/{$slug}.html";
-//    if (!file_exists($str)) {
-////       abort(404);
-//        return redirect('/');
-//    }
-//
-//    // Use of cache
-//    $post = cache()->remember("post{$slug}", now()->addMinutes(20), function () use ($str) {
-//        return file_get_contents($str);
-//    });
-//
-//    // $post = file_get_contents($str);
-    return view('post', [
-        'post' => $post
-    ]);
-})->where('post', '[A-z_\-]+');
+    return view( 'post', [
+//        'post' => Post::findOrFail($id)
+          'post' => $post
+    ] );
+} );
+//    ->whereAlphaNumeric( 'post', );
 // Also there are helper function called ->whereAlpha('post'); and more
 
