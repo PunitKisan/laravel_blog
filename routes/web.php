@@ -2,6 +2,7 @@
 
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
@@ -38,7 +39,7 @@ Route::get( '/', function () {
 //        $document = YamlFrontMatter::parseFile($file);
 //        $posts[] = new Post($document->title,$document->excerpt,$document->date,$document->body(),$document->slug);
 //    }
-    $posts = Post::with('category')->get();
+    $posts = Post::latest()->with('category', 'author')->get();
     return view( 'posts', [ 'posts' => $posts ] );
 //    $posts = Post::all();
 //    return view('posts',[
@@ -57,6 +58,11 @@ Route::get( 'posts/{post:slug}', function ( Post $post ) {
 // Also there are helper function called ->whereAlpha('post'); and more
 
 Route::get('categories/{category:slug}', function(Category $category) {
-    $posts = $category->posts;
+    $posts = $category->posts->load(['category', 'author']); //Egar loading by using load
+    return view( 'posts', [ 'posts' => $posts ] );
+});
+
+Route::get('author/{author:username}', function(User $author) {
+    $posts = $author->posts->load(['category', 'author']); //Egar loading by using load
     return view( 'posts', [ 'posts' => $posts ] );
 });
